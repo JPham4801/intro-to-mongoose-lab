@@ -9,5 +9,10 @@
   "keywords": [],
   "author": "JayP",
   "license": "ISC",
-  "description": "Intro to mongoose lab"
+  "description": "Intro to mongoose lab",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "mongoose": "^8.5.0",
+    "prompt-sync": "^4.2.0"
+  }
 }
