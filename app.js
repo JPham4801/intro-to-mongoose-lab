@@ -20,20 +20,20 @@ const prompt = require('prompt-sync')({sigint: true});
 const lineBreak = () => console.log(`
 -----------------------------------------------
   `);
-let isActiveApp = false;
+let isAppActive = false;
 
 const init = () =>{
   lineBreak()
   console.log("Welcome to the CRM");
   prompt(`Press 'ENTER' to connect.. `);
-  isActiveApp = true;
+  isAppActive = true;
   lineBreak();
   mainMenu();
 }
 
 const mainMenu = async () =>{
   await connect();
-  while(isActiveApp){
+  while(isAppActive === true){
     lineBreak();
     console.log(`
     What would you like to do?
@@ -102,23 +102,62 @@ const updateCustomer = async () => {
   console.log(`
     Below is a list of customers:
     `);
-  const customers = await Customer.find({});
-  console.log('All customers: ', customers);
-  lineBreak()
-  const customerId = prompt(`Copy and paste the id of the customer you would like to update here: `);
 
-  const newName = Prompt(`What is the customer's new name? `);
-  const newAge = Prompt(`What is the customer's new age? `);
+  const customers = await Customer.find({});
+  const formattedCustomers = customers.map((customer) => {
+    return {
+      id: customer._id.toString(),
+      name: customer.name,
+      age: customer.age
+    };
+  });
+
+  formattedCustomers.forEach((customer) => {
+    console.log(`id: ${customer.id} -- Name: ${customer.name}, Age: ${customer.age}`);
+  });
+
+
+  lineBreak()
+  const customerId = prompt(`Copy and paste the id of the customer you would like to UPDATE here: `);
+  const newName = prompt(`What is the customer's new name? `);
+  const newAge = prompt(`What is the customer's new age? `);
+
+  const customer = await Customer.findByIdAndUpdate(customerId, {name: newName, age: newAge}, {new: true})
+  lineBreak();
+  console.log('Updated customer: ', customer);
 }
 
 const deleteCustomer = async () => {
   console.log(`
     4. Delete a customer
     `);
+  console.log(`
+    Below is a list of customers:
+    `);
+  
+  const customers = await Customer.find({});
+  const formattedCustomers = customers.map((customer) => {
+    return {
+      id: customer._id.toString(),
+      name: customer.name,
+      age: customer.age
+    };
+  });
+  
+  formattedCustomers.forEach((customer) => {
+    console.log(`id: ${customer.id} -- Name: ${customer.name}, Age: ${customer.age}`);
+  });
+  
+  lineBreak()
+  const customerId = prompt(`Copy and paste the id of the customer you would like to DELETE here: `);
+
+  const customer = await Customer.findByIdAndDelete(customerId)
+  lineBreak();
+  console.log('Deleted customer: ', customer);
 }
 
 const quitApp = async () => {
-  isActiveApp = false;
+  isAppActive = false;
   await disconnect();
 }
 
